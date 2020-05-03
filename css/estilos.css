@@ -1,0 +1,32 @@
+
+
+.wrapper{
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+canvas{
+  color:#ffffff;
+}
+
+.actual{
+  width:100%;
+  padding: 1em;
+  background-color: #212731;
+}
+
+.semana{
+  margin-top: 2em;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.dia{
+  text-align: center;
+  padding: 2em;
+  background-color: #212731;
+  color: #FFFFFF;
+  flex-basis: 18%;
+}
