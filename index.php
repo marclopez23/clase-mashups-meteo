@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 /*Localización*/
-$localizacion = urlencode("Mataro");
+$localizacion = urlencode($_GET["localidad"]);
 $url_geo= "https://api.opencagedata.com/geocode/v1/json?q=".$localizacion."&key=ca75ee13fcf2422fb10ac41b895c56e8&limit=1";
 $res2=file_get_contents($url_geo);
 $data2=json_decode($res2);
@@ -11,13 +11,10 @@ $lng= $data2->results[0]->geometry->lng;
 $url="https://api.darksky.net/forecast/6da55ae4d3b635780617e4cf3bd9d2ca/".$lat.",".$lng."?units=si&lang=es";
 $res=file_get_contents($url);
 $data=json_decode($res);
-print_r($url);
-
 date_default_timezone_set('UTC+2');
 setlocale(LC_TIME,"es_ES");
-
-
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,6 +25,17 @@ setlocale(LC_TIME,"es_ES");
   <title></title>
 </head>
 <body>
+
+  <div class="buscador">
+    <div class="wrapper">
+      <form class="" action="index.php" method="get">
+        <input type="text" name="localidad" value="" placeholder="Escribe aquí tu localidad">
+        <button>Mostrar el tiempo</button>
+      </form>
+    </div>
+  </div>
+<?php
+if(!empty($localizacion)){?>
   <div class="wrapper">
     <div class="actual">
       <?php
@@ -40,45 +48,38 @@ setlocale(LC_TIME,"es_ES");
       <?php
       $dia = $data->daily->data;
       for ($i = 2; $i <= 6; $i++) {
-        $fecha=$dia[$i]->time;
-        $fecha=utf8_encode($fecha);
-        $fecha=utf8_decode($fecha);
-        $icon=$dia[$i]->icon;
         echo '<div class="dia">';
-        echo '<p>'.strftime("%A %d de %B",$fecha ).'</p>';
+        echo '<p>'.strftime("%A %d de %B",utf8_encode($dia[$i]->time)).'</p>';
         echo '<p>'.round($dia[$i]->temperatureMin).' Cº'.'</p>';
         echo '<p>'.(($dia[$i]->humidity)*100).'%'.'</p>';
         echo '<p>'.(($dia[$i]->cloudCover)*100).'%'.'</p>';
         echo '<p>'.round($dia[$i]->temperatureMax).' Cº'.'</p>';
         echo '<p>'.($dia[$i]->summary).'</p>';
-        echo '<canvas class="'.$icon.'" width="40" height="80"></canvas>';
+        echo '<canvas class="'.$dia[$i]->icon.'" width="40" height="80"></canvas>';
         echo '</div>';
       }?>
     </div>
-
-
-  </div>
+  </div><<?php }; ?>
   <script src="./js/skycons.js">
-
   </script>
   <script>
-    var skycons = new Skycons({"color": "#ffffff"}),
-        list  = [
-          "clear-day", "clear-night", "partly-cloudy-day",
-          "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-          "fog"
-        ],
-        i;
+  var skycons = new Skycons({"color": "#ffffff"}),
+  list  = [
+    "clear-day", "clear-night", "partly-cloudy-day",
+    "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
+    "fog"
+  ],
+  i;
 
-      for(i = list.length; i--; ) {
-          var weatherType = list[i],
-              elements = document.getElementsByClassName( weatherType );
-          for (e = elements.length; e--;){
-              skycons.set( elements[e], weatherType );
-          }
-      }
+  for(i = list.length; i--; ) {
+    var weatherType = list[i],
+    elements = document.getElementsByClassName( weatherType );
+    for (e = elements.length; e--;){
+      skycons.set( elements[e], weatherType );
+    }
+  }
 
-    skycons.play();
+  skycons.play();
   </script>
 </body>
 </html>
